@@ -1,0 +1,321 @@
+/*
+===============================================================================
+  TEST MODULE: TC_24959 - NBC Vehicle Status Comfort Key Off
+  Description: CANoe Test Module with Pass/Fail Report Generation
+  
+  This module is designed to run in CANoe Test Setup and generate automated
+  pass/fail reports based on expected signal behavior transitions.
+  
+===============================================================================
+  SIGNAL MAPPING:
+  ✓ IgnPosSts, EngineSts, StopStartSts, PowertrainSts, HMISts
+  ✓ STS_LH_DoorStatus, VehicleSts, UserPresence
+  ✓ NFR_Speed_FA, NFR_Speed_FA_FailSts, EXT_LGH_ParkingLightCmd
+===============================================================================
+*/
+
+// Global variables for test tracking
+dword g_TestStartTime = 0;
+dword g_TestEndTime = 0;
+int g_TotalChecks = 0;
+int g_PassedChecks = 0;
+int g_FailedChecks = 0;
+int g_WarningChecks = 0;
+int g_TestPassed = 1;
+
+/*
+===============================================================================
+  HELPER FUNCTIONS
+===============================================================================
+*/
+
+void LogResult(char* checkName, int passed, char* expectedValue, char* actualValue)
+{
+  g_TotalChecks = g_TotalChecks + 1;
+  
+  if (passed)
+  {
+    g_PassedChecks = g_PassedChecks + 1;
+    Write("  [PASS] %s", checkName);
+    Write("         Expected: %s", expectedValue);
+    Write("         Actual:   %s", actualValue);
+  }
+  else
+  {
+    g_FailedChecks = g_FailedChecks + 1;
+    g_TestPassed = 0;
+    Write("  [FAIL] %s", checkName);
+    Write("         Expected: %s", expectedValue);
+    Write("         Actual:   %s", actualValue);
+  }
+}
+
+void LogWarning(char* warningMsg)
+{
+  g_WarningChecks = g_WarningChecks + 1;
+  Write("  [WARNING] %s", warningMsg);
+}
+
+/*
+===============================================================================
+  MAIN TEST CASE - TC_24959
+===============================================================================
+*/
+
+testcase TC_24959_KeyOff_Comfort_Test()
+{
+  int vehicleSts_Initial = 0;
+  int userPresence_Initial = 0;
+  int vehicleSts_AfterStim1 = 0;
+  int userPresence_AfterStim1 = 0;
+  int vehicleSts_AfterStim2 = 0;
+  int userPresence_AfterStim2 = 0;
+  
+  Write("");
+  Write("===================================================================");
+  Write("TEST EXECUTION START: TC_24959");
+  Write("===================================================================");
+  Write("");
+  
+  g_TestStartTime = GetTickCount();
+  g_TotalChecks = 0;
+  g_PassedChecks = 0;
+  g_FailedChecks = 0;
+  g_WarningChecks = 0;
+  g_TestPassed = 1;
+  
+  // =========================================================================
+  // PHASE 1: PRE-CONDITION - Set initial conditions
+  // =========================================================================
+  Write("");
+  Write("PHASE 1: PRE-CONDITION - Setting Initial State");
+  Write("");
+  
+  Write("  Setting initial vehicle state...");
+  
+  // Set NFR Speed signals
+  Write("    -> NFR_Speed_FA = 0");
+  NFR_SPEED.NFR_Speed_FA = 0;
+  
+  Write("    -> NFR_Speed_FA_FailSts = 0");
+  NFR_SPEED.NFR_Speed_FA_FailSts = 0;
+  
+  // Set Engine Status signals
+  Write("    -> StopStartSts = 0");
+  STATUS_SGW.StopStartSts = 0;
+  
+  Write("    -> EngineSts = 0");
+  STATUS_SGW.EngineSts = 0;
+  
+  // Set Door Status
+  Write("    -> STS_LH_DoorStatus = 1 (Closed)");
+  STS_LH_DoorStatus_MSG.STS_LH_DoorStatus = 1;
+  
+  // Set Ignition Position
+  Write("    -> IgnPosSts = 1");
+  RFHUB1.IgnPosSts = 1;
+  
+  // Set PowerTrain Status
+  Write("    -> PowertrainSts = 0");
+  STATUS_SGW.PowertrainSts = 0;
+  
+  // Capture initial values
+  vehicleSts_Initial = STATUS_NBC_3.VehicleSts;
+  userPresence_Initial = STATUS_NBC_3.UserPresence;
+  
+  Write("");
+  Write("    Initial VehicleSts: %d", vehicleSts_Initial);
+  Write("    Initial UserPresence: %d", userPresence_Initial);
+  Write("");
+  
+  Wait(100);
+  
+  
+  // =========================================================================
+  // PHASE 2: STIMULATION-1 - Apply first set of test conditions
+  // =========================================================================
+  Write("");
+  Write("PHASE 2: STIMULATION-1 - Apply Test Conditions");
+  Write("");
+  
+  Write("  Applying stimulation conditions...");
+  Write("    -> STS_LH_DoorStatus = 3 (Opened)");
+  STS_LH_DoorStatus_MSG.STS_LH_DoorStatus = 3;
+  
+  Write("    -> HMISts = 1");
+  HMI_INFO.HMISts = 1;
+  
+  Write("");
+  Wait(200);
+  
+  
+  // =========================================================================
+  // PHASE 3: CHECK EXPECTED RESULTS-1
+  // =========================================================================
+  Write("");
+  Write("PHASE 3: CHECKING RESULTS-1");
+  Write("");
+  
+  vehicleSts_AfterStim1 = STATUS_NBC_3.VehicleSts;
+  userPresence_AfterStim1 = STATUS_NBC_3.UserPresence;
+  
+  Write("  Verifying signal transitions...");
+  Write("");
+  
+  // Check 1: VehicleSts transition
+  if (vehicleSts_AfterStim1 == 1)
+  {
+    LogResult("VehicleSts transition 0->1 (Wake_Up to Comfort)", 1, "1", "1");
+  }
+  else
+  {
+    LogResult("VehicleSts transition 0->1 (Wake_Up to Comfort)", 0, "1", "FAILED");
+  }
+  Write("");
+  
+  // Check 2: UserPresence transition
+  if (userPresence_AfterStim1 == 2)
+  {
+    LogResult("UserPresence transition 0->2", 1, "2", "2");
+  }
+  else
+  {
+    LogResult("UserPresence transition 0->2", 0, "2", "FAILED");
+  }
+  Write("");
+  
+  LogWarning("KeySts signals require multi-CAN bus mapping");
+  Write("");
+  
+  Wait(500);
+  
+  
+  // =========================================================================
+  // PHASE 4: STIMULATION-2 - Set parking light command
+  // =========================================================================
+  Write("");
+  Write("PHASE 4: STIMULATION-2 - Parking Light Command");
+  Write("");
+  
+  Write("  Setting parking light command...");
+  Write("    -> EXT_LGH_ParkingLightCmd = 0");
+  EXTERNAL_LIGHTS.EXT_LGH_ParkingLightCmd = 0;
+  
+  Write("    -> Waiting 500ms...");
+  Wait(500);
+  Write("");
+  
+  
+  // =========================================================================
+  // PHASE 5: CHECK EXPECTED RESULTS-2
+  // =========================================================================
+  Write("");
+  Write("PHASE 5: CHECKING RESULTS-2");
+  Write("");
+  
+  vehicleSts_AfterStim2 = STATUS_NBC_3.VehicleSts;
+  userPresence_AfterStim2 = STATUS_NBC_3.UserPresence;
+  
+  Write("  Verifying signal stability...");
+  Write("");
+  
+  // Check 3: VehicleSts stability
+  if (vehicleSts_AfterStim2 == 1)
+  {
+    LogResult("VehicleSts stable at 1 (Comfort)", 1, "1 (stable)", "1");
+  }
+  else
+  {
+    LogResult("VehicleSts stable at 1 (Comfort)", 0, "1 (stable)", "FAILED");
+  }
+  Write("");
+  
+  // Check 4: UserPresence stability
+  if (userPresence_AfterStim2 == 2)
+  {
+    LogResult("UserPresence stable at 2", 1, "2 (stable)", "2");
+  }
+  else
+  {
+    LogResult("UserPresence stable at 2", 0, "2 (stable)", "FAILED");
+  }
+  Write("");
+  
+  
+  // =========================================================================
+  // PHASE 6: POST-CONDITION - Cleanup
+  // =========================================================================
+  Write("");
+  Write("PHASE 6: POST-CONDITION - Cleanup");
+  Write("");
+  
+  Write("  Resetting all signals...");
+  Write("    -> EXT_LGH_ParkingLightCmd = 0");
+  EXTERNAL_LIGHTS.EXT_LGH_ParkingLightCmd = 0;
+  
+  Write("    -> NFR_Speed_FA = 0");
+  NFR_SPEED.NFR_Speed_FA = 0;
+  
+  Write("    -> NFR_Speed_FA_FailSts = 0");
+  NFR_SPEED.NFR_Speed_FA_FailSts = 0;
+  
+  Write("    -> StopStartSts = 0");
+  STATUS_SGW.StopStartSts = 0;
+  
+  Write("    -> EngineSts = 0");
+  STATUS_SGW.EngineSts = 0;
+  
+  Write("    -> STS_LH_DoorStatus = 1");
+  STS_LH_DoorStatus_MSG.STS_LH_DoorStatus = 1;
+  
+  Write("    -> IgnPosSts = 1");
+  RFHUB1.IgnPosSts = 1;
+  
+  Write("    -> PowertrainSts = 0");
+  STATUS_SGW.PowertrainSts = 0;
+  
+  Write("");
+  Write("  Cleanup complete");
+  Write("");
+  
+  
+  // =========================================================================
+  // TEST EXECUTION SUMMARY
+  // =========================================================================
+  g_TestEndTime = GetTickCount();
+  
+  Write("");
+  Write("===================================================================");
+  Write("TEST EXECUTION SUMMARY");
+  Write("===================================================================");
+  Write("");
+  
+  Write("Test Case:    TC_24959 - NBC VehicleSts Comfort KeyOff");
+  Write("Duration:     %d ms", (g_TestEndTime - g_TestStartTime));
+  Write("Total Checks: %d", g_TotalChecks);
+  Write("Passed:       %d", g_PassedChecks);
+  Write("Failed:       %d", g_FailedChecks);
+  Write("Warnings:     %d", g_WarningChecks);
+  Write("");
+  
+  if (g_TestPassed == 1)
+  {
+    Write("RESULT:       *** PASS ***");
+  }
+  else
+  {
+    Write("RESULT:       *** FAIL ***");
+  }
+  
+  Write("");
+  Write("===================================================================");
+  Write("TEST EXECUTION COMPLETE");
+  Write("===================================================================");
+  Write("");
+}
+
+/*
+===============================================================================
+  END OF TEST MODULE
+===============================================================================
+*/

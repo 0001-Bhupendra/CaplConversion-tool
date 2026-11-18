@@ -1,0 +1,57 @@
+// PRE-CONDITION
+// Set all signals to initial/safe values before test starts
+Proxy_write_Power_Unit_Extended = 2 //0 = Thermic; 1 = Hybrid; 2 = EV
+si_sys_TcSen_bTerm15_1 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTerm15_2 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTermS = 0 //0 = off; 1 = on
+si_sys_NFR_NFR_Speed_FA = 0 //0 to 511.9375 km/h
+si_sys_NFR_NFR_Speed_FA_FailSts = 0 //0 = Fail_not_present; 1 = Fail_present
+si_sys_SGW_StopStartSts = 0 //0 = off; 1 = on; 2 = Engine_Restart; 3 = Stop_Request
+si_sys_SGW_EngineSts = 0 //0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down
+si_sys_STS_LH_DoorStatus = 1 //1 = Closed; 3 = Opened
+si_sys_NPE_IgnPosSts = 1 //Ignition position
+si_sys_SGW_PowerTrainSts = 0 //Powertrain status
+
+// STIMULATION-1: Door open + HMI activated
+// This simulates user opening door and HMI becoming active
+si_sys_STS_LH_DoorStatus = 3 //Open door
+si_sys_NPE_IgnPosSts = 1 //Keep ignition in ACC/Run
+si_sys_SGW_PowerTrainSts = 0
+si_sys_SGW_HMISts = 1 //Enable HMI
+
+// EXPECTED RESULTS-1: Check vehicle status transitions
+// Vehicle should transition from Wake_Up to Comfort state
+// User presence should change from No to Yes
+so_sys_F040_VehicleSts = 0->1 //Wake_Up (0) transitions to Comfort (1)
+XCP_sys_F908_UserPresence = 0->2 //No (0) transitions to Yes (2)
+so_sys_F040_KeySts_BODYCAN = 1
+so_sys_F040_KeySts_ACCESSCAN = 1
+so_sys_F040_KeySts_BHCAN = 1
+
+// STIMULATION-2: Set parking light command to active
+// Apply additional stimulus and wait for state stabilization
+si_sys_NPS_ParkingLightsCommand = 0 //Parking lights
+wait = 0.5 //Wait 500 milliseconds for signal propagation
+
+// EXPECTED RESULTS-2: Check if results are stable and Key status transitions
+// Verify vehicle remains in Comfort state (stable)
+// Verify parking light command is accepted
+so_sys_F040_VehicleSts = 1 //Should remain at Comfort state
+XCP_sys_F908_UserPresence = 2 //Should remain with user present
+so_sys_F040_KeySts_BODYCAN = 1->2 //Key status transitions on BODY CAN
+so_sys_F040_KeySts_ACCESSCAN = 1->2 //Key status transitions on ACCESS CAN
+so_sys_F040_KeySts_BHCAN = 1->2 //Key status transitions on BH CAN
+
+// POST-CONDITION
+// Reset all signals to safe state after test completes
+si_sys_TcSen_bTerm15_1 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTerm15_2 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTermS = 0 //0 = off; 1 = on
+si_sys_NPS_ParkingLightsCommand = 0
+si_sys_NFR_NFR_Speed_FA = 0 //0 to 511.9375 km/h
+si_sys_NFR_NFR_Speed_FA_FailSts = 0 //0 = Fail_not_present; 1 = Fail_present
+si_sys_SGW_StopStartSts = 0 //0 = off; 1 = on; 2 = Engine_Restart; 3 = Stop_Request
+si_sys_SGW_EngineSts = 0 //0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down
+si_sys_STS_LH_DoorStatus = 1 //1 = Closed; 3 = Opened
+si_sys_NPE_IgnPosSts = 1 //Ignition position
+si_sys_SGW_PowerTrainSts = 0 //Powertrain status

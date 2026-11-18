@@ -1,0 +1,69 @@
+======================================================================
+TEST CASE METADATA
+======================================================================
+ID: 24960
+TITLE: TC_F040_NBC_VehicleSts_KeyOn_KeyOff
+COMPONENT: rbg.Ferrari_BCM_Testing_F040 Configuration: rbg.Ferrari_BCM_Testing_F040 _Development_F244 Owner: Unassigned Creator: Kumar Ashay (MS/EPE-SYT42-XC) Priority: Unassigned State: Approved Description: Test Case Scope Development Items Summary Requirement Links Link Validity Summary 2383417: NBC shall set sys_NBC_VehicleSts signal based on table below Formal Review General Comments Test Case Design Pre-Condition: Proxy_write_Power_Unit_Extended = 2 //0 = Thermic; 1 = Hybrid; 2 = EV si_sys_TcSen_bTerm15_1 = 0 //0 = off; 1 = on si_sys_TcSen_bTerm15_2 = 0 //0 = off; 1 = on si_sys_TcSen_bTermS = 0 //0 = off; 1 = on //si_sys_TcSen_bKlemme15zas = 0 si_sys_NFR_NFR_Speed_FA = 0 //0 to 511.9375 si_sys_NFR_NFR_Speed_FA_FailSts = 0 //0 = Fail_not_present; 1 = Fail_present; //No end to end error in the reception of signal sys_NFR_NFR_Speed_FA present wait 1 sec //si_sys_NPS_ParkingLightsCommand = 0 //0 = Not_Active; 1 = Active; si_sys_SGW_StopStartSts = 0 //0 = off; 1 = on; 2 = Engine_Restart; 3 = Stop_Request; si_sys_SGW_EngineSts = 0 //0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down si_sys_STS_LH_DoorStatus = 1 si_sys_NPE_IgnPosSts = 1 si_sys_SGW_PowerTrainSts = 0 si_sys_SGW_HMISts = 0 //XCP_sys_F247_ParkLightCmd = 0 (0 = Not_Active; 1 = Active) //XCP_sys_F506_EngineSts = 0 (0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down) //XCP_sys_F506_StopStartSts = 0 (0 = Off; 1 = On; 2 = Engine_Restart; 3 = Stop_Request) //so_sys_F040_KeySts_C1CAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) //so_sys_F040_KeySts_C2CAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) //so_sys_F040_KeySts_BHCAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) Stimulation-1: "Set conditions" si_sys_STS_LH_DoorStatus = 3 si_sys_NPE_IgnPosSts = 4 si_sys_SGW_PowerTrainSts = 0 si_sys_SGW_HMISts = 2 Expected Results-1: "Check if the following results are true" so_sys_F040_VehicleSts = 0->2 XCP_sys_F908_UserPresence = 0->2 so_sys_F040_KeySts_BODYCAN = 1 so_sys_F040_KeySts_ACCESSCAN = 1 so_sys_F040_KeySts_BHCAN = 1 Stimulation-2: "Set park light command to active" si_sys_NPS_ParkingLightsCommand = 1 wait 0.5 sec si_sys_NPS_ParkingLightsCommand = 0 Expected Results-2: "Check if the following results are true and observe if Key status is PARK" so_sys_F040_VehicleSts = 2 XCP_sys_F908_UserPresence = 2 so_sys_F040_KeySts_BODYCAN = 1->2 so_sys_F040_KeySts_ACCESSCAN = 1->2 so_sys_F040_KeySts_BHCAN = 1->2 Post-Condition: si_sys_TcSen_bTerm15_1 = 0 //0 = off; 1 = on si_sys_TcSen_bTerm15_2 = 0 //0 = off; 1 = on si_sys_TcSen_bTermS = 0 //0 = off; 1 = on //si_sys_TcSen_bKlemme15zas = 0 si_sys_NPS_ParkingLightsCommand = 1 wait 0.5 sec si_sys_NPS_ParkingLightsCommand = 0 si_sys_NFR_NFR_Speed_FA = 0 //0 to 511.9375 si_sys_NFR_NFR_Speed_FA_FailSts = 0 //0 = Fail_not_present; 1 = Fail_present; //No end to end error in the reception of signal sys_NFR_NFR_Speed_FA present wait 1 sec //si_sys_NPS_ParkingLightsCommand = 0 //0 = Not_Active; 1 = Active; si_sys_SGW_StopStartSts = 0 //0 = off; 1 = on; 2 = Engine_Restart; 3 = Stop_Request; si_sys_SGW_EngineSts = 0 //0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down si_sys_STS_LH_DoorStatus = 1 si_sys_NPE_IgnPosSts = 1 si_sys_SGW_PowerTrainSts = 0 si_sys_SGW_HMISts = 0 //XCP_sys_F247_ParkLightCmd = 0 (0 = Not_Active; 1 = Active) //XCP_sys_F506_EngineSts = 0 (0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down) //XCP_sys_F506_StopStartSts = 0 (0 = Off; 1 = On; 2 = Engine_Restart; 3 = Stop_Request) //so_sys_F040_KeySts_C1CAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) //so_sys_F040_KeySts_C2CAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) //so_sys_F040_KeySts_BHCAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) Test scripts IDName Component State Script Type Owner Data Records FunctionTest PhaseModifiedValidates Requirements Test Execution Records ID Priority Name ComponentTest EnvironmentIteration Owner Created By Test ScriptLast ResultModified 61320 TC_F040_NBC_ VehicleSts_KeyOn_Key Off rbg.Ferrari_BCM_Testing_F040 UnassignedUnassignedRoy Ayndrila (MS/ENG- HWP11-CV)Roy Ayndrila (MS/ENG- HWP11-CV)None PassedJan 8, 2026 (UTC +01:00) Attachments IDFile Name Size Path Summary Categories Function: TermCtrl Test Phase : System Test TSG Compliance : Yes Test Execution Category : QM Estimate: 0 sec Weight:* 100
+CONFIGURATION: rbg.Ferrari_BCM_Testing_F040 _Development_F244 Owner: Unassigned Creator: Kumar Ashay (MS/EPE-SYT42-XC) Priority: Unassigned State: Approved Description: Test Case Scope Development Items Summary Requirement Links Link Validity Summary 2383417: NBC shall set sys_NBC_VehicleSts signal based on table below Formal Review General Comments Test Case Design Pre-Condition: Proxy_write_Power_Unit_Extended = 2 //0 = Thermic; 1 = Hybrid; 2 = EV si_sys_TcSen_bTerm15_1 = 0 //0 = off; 1 = on si_sys_TcSen_bTerm15_2 = 0 //0 = off; 1 = on si_sys_TcSen_bTermS = 0 //0 = off; 1 = on //si_sys_TcSen_bKlemme15zas = 0 si_sys_NFR_NFR_Speed_FA = 0 //0 to 511.9375 si_sys_NFR_NFR_Speed_FA_FailSts = 0 //0 = Fail_not_present; 1 = Fail_present; //No end to end error in the reception of signal sys_NFR_NFR_Speed_FA present wait 1 sec //si_sys_NPS_ParkingLightsCommand = 0 //0 = Not_Active; 1 = Active; si_sys_SGW_StopStartSts = 0 //0 = off; 1 = on; 2 = Engine_Restart; 3 = Stop_Request; si_sys_SGW_EngineSts = 0 //0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down si_sys_STS_LH_DoorStatus = 1 si_sys_NPE_IgnPosSts = 1 si_sys_SGW_PowerTrainSts = 0 si_sys_SGW_HMISts = 0 //XCP_sys_F247_ParkLightCmd = 0 (0 = Not_Active; 1 = Active) //XCP_sys_F506_EngineSts = 0 (0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down) //XCP_sys_F506_StopStartSts = 0 (0 = Off; 1 = On; 2 = Engine_Restart; 3 = Stop_Request) //so_sys_F040_KeySts_C1CAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) //so_sys_F040_KeySts_C2CAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) //so_sys_F040_KeySts_BHCAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) Stimulation-1: "Set conditions" si_sys_STS_LH_DoorStatus = 3 si_sys_NPE_IgnPosSts = 4 si_sys_SGW_PowerTrainSts = 0 si_sys_SGW_HMISts = 2 Expected Results-1: "Check if the following results are true" so_sys_F040_VehicleSts = 0->2 XCP_sys_F908_UserPresence = 0->2 so_sys_F040_KeySts_BODYCAN = 1 so_sys_F040_KeySts_ACCESSCAN = 1 so_sys_F040_KeySts_BHCAN = 1 Stimulation-2: "Set park light command to active" si_sys_NPS_ParkingLightsCommand = 1 wait 0.5 sec si_sys_NPS_ParkingLightsCommand = 0 Expected Results-2: "Check if the following results are true and observe if Key status is PARK" so_sys_F040_VehicleSts = 2 XCP_sys_F908_UserPresence = 2 so_sys_F040_KeySts_BODYCAN = 1->2 so_sys_F040_KeySts_ACCESSCAN = 1->2 so_sys_F040_KeySts_BHCAN = 1->2 Post-Condition: si_sys_TcSen_bTerm15_1 = 0 //0 = off; 1 = on si_sys_TcSen_bTerm15_2 = 0 //0 = off; 1 = on si_sys_TcSen_bTermS = 0 //0 = off; 1 = on //si_sys_TcSen_bKlemme15zas = 0 si_sys_NPS_ParkingLightsCommand = 1 wait 0.5 sec si_sys_NPS_ParkingLightsCommand = 0 si_sys_NFR_NFR_Speed_FA = 0 //0 to 511.9375 si_sys_NFR_NFR_Speed_FA_FailSts = 0 //0 = Fail_not_present; 1 = Fail_present; //No end to end error in the reception of signal sys_NFR_NFR_Speed_FA present wait 1 sec //si_sys_NPS_ParkingLightsCommand = 0 //0 = Not_Active; 1 = Active; si_sys_SGW_StopStartSts = 0 //0 = off; 1 = on; 2 = Engine_Restart; 3 = Stop_Request; si_sys_SGW_EngineSts = 0 //0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down si_sys_STS_LH_DoorStatus = 1 si_sys_NPE_IgnPosSts = 1 si_sys_SGW_PowerTrainSts = 0 si_sys_SGW_HMISts = 0 //XCP_sys_F247_ParkLightCmd = 0 (0 = Not_Active; 1 = Active) //XCP_sys_F506_EngineSts = 0 (0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down) //XCP_sys_F506_StopStartSts = 0 (0 = Off; 1 = On; 2 = Engine_Restart; 3 = Stop_Request) //so_sys_F040_KeySts_C1CAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) //so_sys_F040_KeySts_C2CAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) //so_sys_F040_KeySts_BHCAN = 1 (0 = Data_not_valid; 1 = STOP; 2 = PARK; 4 = ON; 12 = CRANK_ON) Test scripts IDName Component State Script Type Owner Data Records FunctionTest PhaseModifiedValidates Requirements Test Execution Records ID Priority Name ComponentTest EnvironmentIteration Owner Created By Test ScriptLast ResultModified 61320 TC_F040_NBC_ VehicleSts_KeyOn_Key Off rbg.Ferrari_BCM_Testing_F040 UnassignedUnassignedRoy Ayndrila (MS/ENG- HWP11-CV)Roy Ayndrila (MS/ENG- HWP11-CV)None PassedJan 8, 2026 (UTC +01:00) Attachments IDFile Name Size Path Summary Categories Function: TermCtrl Test Phase : System Test TSG Compliance : Yes Test Execution Category : QM Estimate: 0 sec Weight:* 100
+
+======================================================================
+PRE-CONDITION
+======================================================================
+Proxy_write_Power_Unit_Extended = 2 //0 = Thermic; 1 = Hybrid; 2 = EV
+si_sys_TcSen_bTerm15_1 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTerm15_2 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTermS = 0 //0 = off; 1 = on //si_sys_TcSen_bKlemme15zas = 0
+si_sys_NFR_NFR_Speed_FA = 0 //0 to 511.9375
+si_sys_NFR_NFR_Speed_FA_FailSts = 0 //0 = Fail_not_present; 1 = Fail_present; //No end to end error in the reception of signal sys_NFR_NFR_Speed_FA present wait 1 sec //si_sys_NPS_ParkingLightsCommand = 0 //0 = Not_Active; 1 = Active;
+si_sys_SGW_StopStartSts = 0 //0 = off; 1 = on; 2 = Engine_Restart; 3 = Stop_Request;
+si_sys_SGW_EngineSts = 0 //0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down
+si_sys_STS_LH_DoorStatus = 1
+si_sys_NPE_IgnPosSts = 1
+si_sys_SGW_PowerTrainSts = 0
+
+======================================================================
+STIMULATION-1: Set conditions
+======================================================================
+
+Actions:
+  si_sys_STS_LH_DoorStatus = 3
+  si_sys_NPE_IgnPosSts = 4
+  si_sys_SGW_PowerTrainSts = 0
+  si_sys_SGW_HMISts = 2
+
+Expected Results: Check if the following results are true
+  so_sys_F040_VehicleSts = 0->2
+  XCP_sys_F908_UserPresence = 0->2
+  so_sys_F040_KeySts_BODYCAN = 1
+  so_sys_F040_KeySts_ACCESSCAN = 1
+  so_sys_F040_KeySts_BHCAN = 1
+
+======================================================================
+STIMULATION-2: Set park light command to active
+======================================================================
+
+Actions:
+  si_sys_NPS_ParkingLightsCommand = 0
+  wait = 0.5
+
+Expected Results: Check if the following results are true and observe if Key status is PARK
+  so_sys_F040_VehicleSts = 2
+  XCP_sys_F908_UserPresence = 2
+  so_sys_F040_KeySts_BODYCAN = 1->2
+  so_sys_F040_KeySts_ACCESSCAN = 1->2
+  so_sys_F040_KeySts_BHCAN = 1->2
+
+======================================================================
+POST-CONDITION
+======================================================================
+si_sys_TcSen_bTerm15_1 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTerm15_2 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTermS = 0 //0 = off; 1 = on //si_sys_TcSen_bKlemme15zas = 0
+si_sys_NPS_ParkingLightsCommand = 0
+si_sys_NFR_NFR_Speed_FA = 0 //0 to 511.9375
+si_sys_NFR_NFR_Speed_FA_FailSts = 0 //0 = Fail_not_present; 1 = Fail_present; //No end to end error in the reception of signal sys_NFR_NFR_Speed_FA present wait 1 sec //si_sys_NPS_ParkingLightsCommand = 0 //0 = Not_Active; 1 = Active;
+si_sys_SGW_StopStartSts = 0 //0 = off; 1 = on; 2 = Engine_Restart; 3 = Stop_Request;
+si_sys_SGW_EngineSts = 0 //0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down
+si_sys_STS_LH_DoorStatus = 1
+si_sys_NPE_IgnPosSts = 1
+si_sys_SGW_PowerTrainSts = 0

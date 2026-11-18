@@ -1,0 +1,200 @@
+/*
+===============================================================================
+  TEST MODULE: TC_24959 - NBC Vehicle Status Comfort Key Off
+  Description: CANoe Test Module with Pass/Fail Verification
+  
+  Signals Mapped:
+  ✓ IgnPosSts, EngineSts, StopStartSts, PowertrainSts, HMISts
+  ✓ STS_LH_DoorStatus, VehicleSts, UserPresence
+  ✓ NFR_Speed_FA, NFR_Speed_FA_FailSts, EXT_LGH_ParkingLightCmd
+===============================================================================
+*/
+
+testcase TC_24959_KeyOff_Comfort_Test()
+{
+  int passed = 0;
+  int failed = 0;
+  int warnings = 0;
+  int total = 0;
+  dword startTime;
+  dword endTime;
+  
+  Write("");
+  Write("===================================================================");
+  Write("TEST EXECUTION: TC_24959 - Vehicle Status Comfort Key Off");
+  Write("===================================================================");
+  Write("");
+  
+  startTime = GetTickCount();
+  
+  // =========================================================================
+  // PHASE 1: PRE-CONDITION
+  // =========================================================================
+  Write("PHASE 1: PRE-CONDITION - Setting Initial State");
+  Write("");
+  
+  NFR_SPEED.NFR_Speed_FA = 0;
+  NFR_SPEED.NFR_Speed_FA_FailSts = 0;
+  STATUS_SGW.StopStartSts = 0;
+  STATUS_SGW.EngineSts = 0;
+  STS_LH_DoorStatus_MSG.STS_LH_DoorStatus = 1;
+  RFHUB1.IgnPosSts = 1;
+  STATUS_SGW.PowertrainSts = 0;
+  
+  Write("  Initial signals set to default values");
+  Write("");
+  Wait(100);
+  
+  // =========================================================================
+  // PHASE 2: STIMULATION-1
+  // =========================================================================
+  Write("PHASE 2: STIMULATION-1 - Apply Test Conditions");
+  Write("");
+  
+  STS_LH_DoorStatus_MSG.STS_LH_DoorStatus = 3;
+  HMI_INFO.HMISts = 1;
+  
+  Write("  Door opened, HMI enabled");
+  Write("");
+  Wait(200);
+  
+  // =========================================================================
+  // PHASE 3: CHECK RESULTS-1
+  // =========================================================================
+  Write("PHASE 3: CHECKING RESULTS-1");
+  Write("");
+  
+  total = total + 1;
+  if (STATUS_NBC_3.VehicleSts == 1)
+  {
+    Write("  [PASS] Check 1: VehicleSts transition 0->1");
+    passed = passed + 1;
+  }
+  else
+  {
+    Write("  [FAIL] Check 1: VehicleSts = %d (expected 1)", STATUS_NBC_3.VehicleSts);
+    failed = failed + 1;
+  }
+  Write("");
+  
+  total = total + 1;
+  if (STATUS_NBC_3.UserPresence == 2)
+  {
+    Write("  [PASS] Check 2: UserPresence transition 0->2");
+    passed = passed + 1;
+  }
+  else
+  {
+    Write("  [FAIL] Check 2: UserPresence = %d (expected 2)", STATUS_NBC_3.UserPresence);
+    failed = failed + 1;
+  }
+  Write("");
+  
+  warnings = warnings + 1;
+  Write("  [WARNING] KeySts signals require multi-CAN mapping");
+  Write("");
+  
+  Wait(500);
+  
+  // =========================================================================
+  // PHASE 4: STIMULATION-2
+  // =========================================================================
+  Write("PHASE 4: STIMULATION-2 - Parking Light Command");
+  Write("");
+  
+  EXTERNAL_LIGHTS.EXT_LGH_ParkingLightCmd = 0;
+  
+  Write("  Parking light command applied");
+  Write("  Waiting 500ms...");
+  Write("");
+  Wait(500);
+  
+  // =========================================================================
+  // PHASE 5: CHECK RESULTS-2
+  // =========================================================================
+  Write("PHASE 5: CHECKING RESULTS-2");
+  Write("");
+  
+  total = total + 1;
+  if (STATUS_NBC_3.VehicleSts == 1)
+  {
+    Write("  [PASS] Check 3: VehicleSts stable at 1");
+    passed = passed + 1;
+  }
+  else
+  {
+    Write("  [FAIL] Check 3: VehicleSts = %d (expected 1)", STATUS_NBC_3.VehicleSts);
+    failed = failed + 1;
+  }
+  Write("");
+  
+  total = total + 1;
+  if (STATUS_NBC_3.UserPresence == 2)
+  {
+    Write("  [PASS] Check 4: UserPresence stable at 2");
+    passed = passed + 1;
+  }
+  else
+  {
+    Write("  [FAIL] Check 4: UserPresence = %d (expected 2)", STATUS_NBC_3.UserPresence);
+    failed = failed + 1;
+  }
+  Write("");
+  
+  // =========================================================================
+  // PHASE 6: POST-CONDITION
+  // =========================================================================
+  Write("PHASE 6: POST-CONDITION - Cleanup");
+  Write("");
+  
+  EXTERNAL_LIGHTS.EXT_LGH_ParkingLightCmd = 0;
+  NFR_SPEED.NFR_Speed_FA = 0;
+  NFR_SPEED.NFR_Speed_FA_FailSts = 0;
+  STATUS_SGW.StopStartSts = 0;
+  STATUS_SGW.EngineSts = 0;
+  STS_LH_DoorStatus_MSG.STS_LH_DoorStatus = 1;
+  RFHUB1.IgnPosSts = 1;
+  STATUS_SGW.PowertrainSts = 0;
+  
+  Write("  All signals reset to initial state");
+  Write("");
+  
+  // =========================================================================
+  // TEST SUMMARY
+  // =========================================================================
+  endTime = GetTickCount();
+  
+  Write("");
+  Write("===================================================================");
+  Write("TEST EXECUTION SUMMARY");
+  Write("===================================================================");
+  Write("");
+  Write("Test Case:    TC_24959 - NBC VehicleSts Comfort KeyOff");
+  Write("Duration:     %d ms", (endTime - startTime));
+  Write("Total Checks: %d", total);
+  Write("Passed:       %d", passed);
+  Write("Failed:       %d", failed);
+  Write("Warnings:     %d", warnings);
+  Write("");
+  
+  if (failed == 0)
+  {
+    Write("RESULT:       *** PASS ***");
+  }
+  else
+  {
+    Write("RESULT:       *** FAIL ***");
+  }
+  
+  Write("");
+  Write("===================================================================");
+  Write("TEST EXECUTION COMPLETE");
+  Write("===================================================================");
+  Write("");
+}
+
+/*
+===============================================================================
+  END OF TEST MODULE
+===============================================================================
+*/

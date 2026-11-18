@@ -1,0 +1,49 @@
+// PRE-CONDITION
+Proxy_write_Power_Unit_Extended = 2 //0 = Thermic; 1 = Hybrid; 2 = EV
+si_sys_TcSen_bTerm15_1 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTerm15_2 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTermS = 0 //0 = off; 1 = on //si_sys_TcSen_bKlemme15zas = 0
+si_sys_NFR_NFR_Speed_FA = 0 //0 to 511.9375
+si_sys_NFR_NFR_Speed_FA_FailSts = 0 //0 = Fail_not_present; 1 = Fail_present; //No end to end error in the reception of signal sys_NFR_NFR_Speed_FA present wait 1 sec //si_sys_NPS_ParkingLightsCommand = 0 //0 = Not_Active; 1 = Active;
+si_sys_SGW_StopStartSts = 0 //0 = off; 1 = on; 2 = Engine_Restart; 3 = Stop_Request;
+si_sys_SGW_EngineSts = 0 //0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down
+si_sys_STS_LH_DoorStatus = 1
+si_sys_NPE_IgnPosSts = 1
+si_sys_SGW_PowerTrainSts = 0
+
+// STIMULATION-1: Set conditions
+si_sys_STS_LH_DoorStatus = 3
+si_sys_NPE_IgnPosSts = 1
+si_sys_SGW_PowerTrainSts = 0
+si_sys_SGW_HMISts = 1
+
+// EXPECTED RESULTS-1: Check if the following results are true
+so_sys_F040_VehicleSts = 0->1
+XCP_sys_F908_UserPresence = 0->2
+so_sys_F040_KeySts_BODYCAN = 1
+so_sys_F040_KeySts_ACCESSCAN = 1
+so_sys_F040_KeySts_BHCAN = 1
+
+// STIMULATION-2: Set park light command to active
+si_sys_NPS_ParkingLightsCommand = 0
+wait = 0.5
+
+// EXPECTED RESULTS-2: Check if the following results are true and observe if Key status is PARK
+so_sys_F040_VehicleSts = 1
+XCP_sys_F908_UserPresence = 2
+so_sys_F040_KeySts_BODYCAN = 1->2
+so_sys_F040_KeySts_ACCESSCAN = 1->2
+so_sys_F040_KeySts_BHCAN = 1->2
+
+// POST-CONDITION
+si_sys_TcSen_bTerm15_1 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTerm15_2 = 0 //0 = off; 1 = on
+si_sys_TcSen_bTermS = 0 //0 = off; 1 = on //si_sys_TcSen_bKlemme15zas = 0
+si_sys_NPS_ParkingLightsCommand = 0
+si_sys_NFR_NFR_Speed_FA = 0 //0 to 511.9375
+si_sys_NFR_NFR_Speed_FA_FailSts = 0 //0 = Fail_not_present; 1 = Fail_present; //No end to end error in the reception of signal sys_NFR_NFR_Speed_FA present wait 1 sec //si_sys_NPS_ParkingLightsCommand = 0 //0 = Not_Active; 1 = Active;
+si_sys_SGW_StopStartSts = 0 //0 = off; 1 = on; 2 = Engine_Restart; 3 = Stop_Request;
+si_sys_SGW_EngineSts = 0 //0 = Engine_OFF; 1 = Engine_ON; 2 = Engine_cranking; 3 = Engine_Shut_down
+si_sys_STS_LH_DoorStatus = 1
+si_sys_NPE_IgnPosSts = 1
+si_sys_SGW_PowerTrainSts = 0

@@ -1,0 +1,280 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                  QUICK START GUIDE (5 MINUTES)                             ║
+║                                                                            ║
+║          TXT to CAPL Converter Tool - Get Started Now                      ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+INSTALLATION (1 MINUTE)
+════════════════════════════════════════════════════════════════════════════
+
+1. Make sure Python 3.8+ is installed on your system
+   
+   Test: Open Command Prompt and type:
+   > python --version
+   
+   Should show: Python 3.x.x (3.8 or higher)
+
+2. Install Streamlit (runs once):
+   
+   > pip install streamlit
+   
+   Or if that doesn't work:
+   
+   > python -m pip install streamlit
+
+3. Done! You're ready to use the tool.
+
+
+LAUNCHING THE TOOL (30 SECONDS)
+════════════════════════════════════════════════════════════════════════════
+
+Option 1: Double-click the launcher
+   • Look for: run_tool.bat (Windows)
+   • Or: run_tool.ps1 (Windows PowerShell)
+   • Or: run_tool.sh (macOS/Linux)
+   • Double-click it - done!
+
+Option 2: Command line
+   
+   Open Command Prompt in this folder and type:
+   > streamlit run app.py
+   
+   Or:
+   > python -m streamlit run app.py
+
+Expected: A browser window opens with the tool!
+   URL: http://localhost:8501
+
+
+USING THE TOOL (3 MINUTES)
+════════════════════════════════════════════════════════════════════════════
+
+Step 1: Upload Your Test Files
+   • Click "Choose .txt files" button
+   • Select one or more test case .txt files
+   • Files start processing automatically
+
+Step 2: Wait for Processing
+   • Progress bar shows status
+   • Each file is parsed and converted
+   • Takes a few seconds for most files
+
+Step 3: Review Results
+   • Green box shows success count
+   • Red shows any errors
+   • Each generated .can file listed
+
+Step 4: Download Files
+   
+   Option A: One file at a time
+   • Click "📥 Download" button on each file
+   • .can file downloads to your computer
+   
+   Option B: Everything as ZIP (recommended)
+   • Click "📦 Download All as ZIP"
+   • One ZIP file with all .can files
+   • Includes README and setup instructions
+   • Perfect for sharing with teammates!
+
+Step 5: Import into CANoe
+   • Open CANoe Test Setup
+   • Right-click "CAPL Test Modules"
+   • Click "New..." → "Add..."
+   • Browse to your .can file(s)
+   • Click OK
+   • Tests are ready to run!
+
+
+EXAMPLE: Converting Your First File
+════════════════════════════════════════════════════════════════════════════
+
+You have this test file: TC_24959 - TC_F040_NBC_VehicleSts_Comfort_KeyOff.txt
+
+1. Click "Choose .txt files"
+2. Select: TC_24959 - TC_F040_NBC_VehicleSts_Comfort_KeyOff.txt
+3. Click "Open"
+
+Tool automatically:
+   ✓ Parses the test file
+   ✓ Maps signal names to CAN signals
+   ✓ Generates CAPL code
+   ✓ Shows result: TC_24959_KeyOff_Comfort_Test.can
+
+4. Click "📥 Download" to get: TC_24959_KeyOff_Comfort_Test.can
+
+5. In CANoe Test Setup:
+   • Right-click CAPL Test Modules → New... → Add...
+   • Select TC_24959_KeyOff_Comfort_Test.can
+   • Click OK
+   • Select test → Click START
+   • Monitor Output Console for [PASS] or [FAIL]
+
+
+REQUIRED FILE FORMAT
+════════════════════════════════════════════════════════════════════════════
+
+Your .txt files MUST have this structure:
+
+// PRE-CONDITION
+signal_name = value
+
+// STIMULATION-1: Description here
+signal_name = value
+
+// EXPECTED RESULTS-1: Check these conditions
+signal_name = expected_value
+signal_name = old_value->new_value
+
+// STIMULATION-2: More conditions
+signal_name = value
+wait = 0.5
+
+// EXPECTED RESULTS-2: Final checks
+signal_name = expected_value
+
+// POST-CONDITION
+signal_name = value
+
+
+EXAMPLE FILE FORMAT:
+════════════════════════════════════════════════════════════════════════════
+
+// PRE-CONDITION
+si_sys_NFR_NFR_Speed_FA = 0
+si_sys_SGW_EngineSts = 0
+si_sys_STS_LH_DoorStatus = 1
+
+// STIMULATION-1: Open door and enable HMI
+si_sys_STS_LH_DoorStatus = 3
+si_sys_SGW_HMISts = 1
+
+// EXPECTED RESULTS-1: Check vehicle wakes up
+so_sys_F040_VehicleSts = 0->1
+XCP_sys_F908_UserPresence = 0->2
+
+// STIMULATION-2: Set parking light
+si_sys_NPS_ParkingLightsCommand = 0
+wait = 0.5
+
+// EXPECTED RESULTS-2: Confirm stable state
+so_sys_F040_VehicleSts = 1
+XCP_sys_F908_UserPresence = 2
+
+// POST-CONDITION
+si_sys_NFR_NFR_Speed_FA = 0
+si_sys_SGW_EngineSts = 0
+si_sys_STS_LH_DoorStatus = 1
+
+
+WHAT HAPPENS NEXT?
+════════════════════════════════════════════════════════════════════════════
+
+The tool generates CAPL code that:
+
+1. PHASE 1 - Sets all signals to initial state (PRE-CONDITION)
+2. PHASE 2 - Applies first test conditions (STIMULATION-1)
+3. PHASE 3 - Verifies expected state changes (EXPECTED RESULTS-1)
+4. PHASE 4 - Applies additional conditions (STIMULATION-2)
+5. PHASE 5 - Verifies final state (EXPECTED RESULTS-2)
+6. PHASE 6 - Resets everything (POST-CONDITION)
+
+Then outputs:
+  [PASS] Check 1: Signal value matched
+  [PASS] Check 2: Signal transition detected
+  [FAIL] Check 3: Signal did not reach expected value
+  ...
+  
+  OVERALL RESULT: ✓✓✓ PASS ✓✓✓  or  ✗✗✗ FAIL ✗✗✗
+
+
+TROUBLESHOOTING
+════════════════════════════════════════════════════════════════════════════
+
+App won't start
+→ Python not installed? Download from python.org
+→ Streamlit not installed? Run: pip install streamlit
+→ Port 8501 busy? Close other Streamlit windows
+
+Browser won't open
+→ Manually visit: http://localhost:8501
+→ Or try different browser (Chrome, Firefox, Edge)
+
+Upload fails
+→ File must be .txt (not .doc or .pdf)
+→ File must follow the format above
+→ Filename should include "TC_" with test case number
+
+Generated CAPL won't compile in CANoe
+→ All 3 DBC files loaded? Check CANoe configuration
+→ Signals in DBC? Verify signal names
+→ Test case name matches? Should be like TC_24959_*_Test
+
+Test runs but nothing happens
+→ Enable CANoe simulation mode
+→ Increase Wait() times if needed
+→ Check CAN hardware/channel configuration
+
+
+SHARING WITH TEAMMATES
+════════════════════════════════════════════════════════════════════════════
+
+Perfect! That's what the ZIP download is for:
+
+1. Use "📦 Download All as ZIP" button
+2. Share ZIP file with teammates via email/Teams/Slack
+3. They extract the ZIP folder
+4. They follow the same steps (5 minutes above)
+5. Ready to go - no reconfiguration needed!
+
+ZIP package includes:
+  ✓ All .can test modules
+  ✓ README.txt - Full documentation
+  ✓ SETUP_INSTRUCTIONS.txt - Step-by-step guide
+
+
+NEXT STEPS
+════════════════════════════════════════════════════════════════════════════
+
+After getting your first test working:
+
+1. Read README.md for detailed documentation
+2. Check signal_mapping to add more signals if needed
+3. Customize CAPL code if needed (edit .can files)
+4. Create CI/CD pipeline to auto-convert test files
+5. Scale to hundreds of test cases
+
+For support or questions, contact BCM Test Automation team.
+
+
+KEY FILES IN THIS PACKAGE
+════════════════════════════════════════════════════════════════════════════
+
+app.py
+  → Main Streamlit web application
+
+text_parser.py
+  → Parses .txt test files
+
+capl_generator.py
+  → Generates CAPL code
+
+signal_mapping.py
+  → Maps signal names to CAN signals
+
+requirements.txt
+  → Python dependencies (streamlit)
+
+run_tool.bat / run_tool.ps1
+  → Launch scripts for Windows
+
+README.md
+  → Full documentation (this file)
+
+SETUP_INSTRUCTIONS.txt
+  → CANoe import guide
+
+
+════════════════════════════════════════════════════════════════════════════
+You're all set! Happy testing! 🚀
+════════════════════════════════════════════════════════════════════════════
